@@ -265,6 +265,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 150557479}
+  SamplingDistance: 0.1
+  LearningRate: 50
+  DistanceThreshold: 0.2
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

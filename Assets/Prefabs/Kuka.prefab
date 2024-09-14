@@ -399,6 +399,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axis: {x: 1, y: 0, z: 0}
+  MinAngle: -30
+  MaxAngle: 30
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3451167235191437807
 GameObject:
@@ -553,6 +555,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axis: {x: 0, y: 1, z: 0}
+  MinAngle: -30
+  MaxAngle: 30
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &5365107192068902512
 GameObject:
@@ -604,6 +608,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axis: {x: 1, y: 0, z: 0}
+  MinAngle: -30
+  MaxAngle: 30
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &5607874546985420644
 GameObject:
@@ -969,6 +975,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axis: {x: 0, y: 0, z: 0}
+  MinAngle: -180
+  MaxAngle: 180
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &6517393928651394525
 GameObject:
@@ -1125,6 +1133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Axis: {x: 0, y: 0, z: 1}
+  MinAngle: -30
+  MaxAngle: 30
   StartOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &7445341874505790664
 GameObject:
