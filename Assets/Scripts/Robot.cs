@@ -5,10 +5,22 @@ using UnityEngine;
 
 public class Robot : MonoBehaviour
 {
+    public enum KinematicsModeEnum {
+        ForwardKinematics,
+        InverseKinematics
+    }
+
+    public bool DrawDebugLines = true;
+
+    public KinematicsModeEnum KinematicsMode = KinematicsModeEnum.ForwardKinematics;
     public GameObject Target;
     public float SamplingDistance;
     public float LearningRate;
     public float DistanceThreshold;
+    public uint MaxIterations = 100;
+    private uint currentIteration = 0;
+    private Vector3 lastTargetPosition;
+    private float minDistance = float.PositiveInfinity;
     RobotJoint[] Joints;
 
     private void Awake()
@@ -18,24 +30,43 @@ public class Robot : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (Target == null) return;
+
         float[] angles = Joints
-                .Select(j => Vector3.Dot(j.transform.localRotation.eulerAngles, j.Axis))
+                .Select(j => j.Angle)
                 .ToArray<float>();
 
-        #region Forward Kinematics
-        // Vector3 NewTargetPos = ForwardKinematics(angles);
-        // Target.transform.position = NewTargetPos;
-        #endregion
-
-        #region Inverse Kinematics
-        InverseKinematics(Target.transform.position, angles);
-        for (int i = 0; i < Joints.Length; i++)
-        {
-            Joints[i].transform.localRotation = Quaternion.AngleAxis(
-                angles[i], Joints[i].Axis
-            );
+        if (KinematicsMode == KinematicsModeEnum.ForwardKinematics) {
+            #region Forward Kinematics
+            Vector3 NewTargetPos = ForwardKinematics(angles);
+            Target.transform.position = NewTargetPos;
+            #endregion
+        } else if (KinematicsMode == KinematicsModeEnum.InverseKinematics) {
+            #region Inverse Kinematics
+            try {
+                if (Target.transform.position != lastTargetPosition) {
+                    currentIteration = 0;
+                    lastTargetPosition = Target.transform.position;
+                    minDistance = DistanceFormTarget(lastTargetPosition, angles);
+                } else {
+                    if (currentIteration >= MaxIterations) return;
+                    var currentDistance = DistanceFormTarget(lastTargetPosition, angles);
+                    if (currentDistance < minDistance) {
+                        minDistance = currentDistance;
+                        currentIteration = 0;
+                    } else {
+                        currentIteration++;
+                    }
+                }
+                InverseKinematics(lastTargetPosition, angles);
+                for (int i = 0; i < Joints.Length; i++)
+                {
+                    Joints[i].Angle = angles[i];
+                }
+            } catch {}
+            #endregion
         }
-        #endregion
+        
     }
 
     private Vector3 ForwardKinematics(float[] angles)
@@ -46,9 +77,12 @@ public class Robot : MonoBehaviour
         {
             // Выполняет поворот вокруг новой оси
             rotation *= Quaternion.AngleAxis(angles[i - 1], Joints[i - 1].Axis);
-            Vector3 nextPoint = prevPoint + rotation * Joints[i].StartOffset;
-
-            // Debug.DrawLine(prevPoint, nextPoint, Color.green, 0.1f);
+            Vector3 nextPoint = prevPoint + rotation * Vector3.Scale(Joints[i].StartOffset, Joints[i - 1].transform.lossyScale);
+            
+            if (DrawDebugLines) {
+                Debug.DrawLine(prevPoint, nextPoint, Color.green, 0.1f);
+            }
+            
             prevPoint = nextPoint;
         }
         return prevPoint;

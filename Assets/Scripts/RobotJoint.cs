@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class RobotJoint : MonoBehaviour
 {
+    public float MinAngle = float.NegativeInfinity;
+    public float MaxAngle = float.PositiveInfinity;
+    public float Angle;
     public Vector3 Axis;
     public Vector3 StartOffset;
-    void Awake()
-    {
-        StartOffset = transform.position - transform.parent.transform.position;
+    void FixedUpdate() {
+        Angle = Mathf.Clamp(Angle, MinAngle, MaxAngle);
+        transform.localEulerAngles = Axis * Angle;
     }
 }
